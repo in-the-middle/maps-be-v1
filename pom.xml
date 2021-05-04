@@ -92,4 +92,65 @@
             <version>1.3.2</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>4.3.1</version>
+                <executions>
+                    <execution>
+                        <id>petstore-typescript-fetch-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/mapsApi.yaml</inputSpec>
+                            <generatorName>typescript-fetch-api</generatorName>
+                            <!--                            <modelNameSuffix>Dto</modelNameSuffix>-->
+                            <output>${project.build.directory}/mapsApi</output>
+                            <configOptions>
+                                <!--                                <supportsES6>true</supportsES6>-->
+                                <!--                                <withInterfaces>withInterfaces</withInterfaces>-->
+                                <!--                                <generateModelTests>true</generateModelTests>-->
+                                <ngVersion>7.0.0</ngVersion>
+                                <npmName>@ua.trip.maps/mapsApi</npmName>
+                                <npmVersion>1.0.${maven.build.timestamp}</npmVersion>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-navigation-spring-api-v1</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/mapsApi.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <output>${project.build.directory}/generated-sources/maps-be-v1</output>
+                            <apiPackage>ua.trip.maps.service.api</apiPackage>
+                            <modelPackage>ua.trip.maps.service.model</modelPackage>
+                            <invokerPackage>ua.trip.maps.service.base</invokerPackage>
+                            <configOptions>
+                                <interfaceOnly>true</interfaceOnly>
+                                <dateLibrary>java11-zonedatetime</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>io.github.jhannes.openapi</groupId>
+                        <artifactId>openapi-generator-typescript-fetch-api</artifactId>
+                        <version>0.1.3</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 </project>
