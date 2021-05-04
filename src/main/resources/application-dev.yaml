@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: maps-be-v1
+server:
+  port: 8081
