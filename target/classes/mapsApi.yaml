@@ -1,0 +1,112 @@
+openapi: "3.0.0"
+info:
+  description: "Maps Service"
+  version: "0.0.1"
+  title: "ua.trip.maps.api.v1.MapsApi"
+  contact:
+    email: "ermakovsa03@gmail.com"
+paths:
+  /route:
+    post:
+      summary: getRoute
+      operationId: getRoute
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteInputDTO"
+      responses:
+        200:
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RouteOutputDTO'
+components:
+  schemas:
+    RouteInputDTO:
+      description: "Object that represents input of route request"
+      type: object
+      properties:
+        origin:
+          description: ""
+          $ref: "#/components/schemas/LocationDTO"
+        destination:
+          description: ""
+          $ref: "#/components/schemas/LocationDTO"
+        mode:
+          description: ""
+          $ref: "#/components/schemas/TravelModeDTO"
+        includeTolls:
+          description: ""
+          type: boolean
+        includeHighways:
+          description: ""
+          type: boolean
+        includeFerries:
+          description: ""
+          type: boolean
+    LocationDTO:
+      description: "Single set of lat and lng fields"
+      type: object
+      properties:
+        lat:
+          description: "Latitude"
+          type: double
+        lon:
+          description: "Longitude"
+          type: double
+    SummaryDTO:
+      type: object
+      properties:
+        minLat:
+          description: ""
+          type: double
+        minLon:
+          description: ""
+          type: double
+        maxLat:
+          description: ""
+          type: double
+        maxLon:
+          description: ""
+          type: double
+        time:
+          description: ""
+          type: double
+        length:
+          description: ""
+          type: double
+    RouteOutputDTO:
+      type: object
+      properties:
+        units:
+          description: ""
+          type: string
+        language:
+          description: ""
+          type: string
+        origin:
+          description: ""
+          $ref: "#/components/schemas/LocationDTO"
+        destination:
+          description: ""
+          $ref: "#/components/schemas/LocationDTO"
+        summary:
+          $ref: "#/components/schemas/SummaryDTO"
+        shape:
+          description: ""
+          type: string
+    TravelModeDTO:
+      description: >
+        Travel modes:
+         * Driving (default) - indicates standard driving directions using the road network
+         * Walking - requests walking directions via pedestrian paths & sidewalks (where available)
+         * Bicycling - requests bicycling directions via bicycle paths & preferred streets (where available)
+         * Transit - requests directions via public transit routes (where available)
+      enum:
+        - DRIVING
+        - WALKING
+        - BICYCLING
+        - TRANSIT
