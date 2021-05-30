@@ -10,6 +10,14 @@
  * Do not edit the class manually.
  */
 
+export interface CenterInputDTO {
+    users?: Array<UserInfoDTO>;
+}
+
+export interface CenterOutputDTO {
+    location?: LocationDTO;
+}
+
 /**
  * Single set of lat and lng fields
  */
@@ -63,4 +71,9 @@ export enum TravelModeDTO {
     WALKING = "WALKING",
     BICYCLING = "BICYCLING",
     TRANSIT = "TRANSIT",
+}
+
+export interface UserInfoDTO {
+    location?: LocationDTO;
+    mode?: TravelModeDTO;
 }

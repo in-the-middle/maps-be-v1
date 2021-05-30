@@ -12,11 +12,14 @@
  */
 
 import {
+    CenterInputDTO,
+    CenterOutputDTO,
     LocationDTO,
     RouteInputDTO,
     RouteOutputDTO,
     SummaryDTO,
     TravelModeDTO,
+    UserInfoDTO,
 } from "./model";
 
 import { BaseAPI } from "./base";
@@ -29,6 +32,16 @@ export interface ApplicationApis {
  * DefaultApi - object-oriented interface
  */
 export interface DefaultApiInterface {
+    /**
+     *
+     * @summary getCenter
+     * @param {*} [params] Request parameters, including pathParams, queryParams (including bodyParams) and http options.
+     * @throws {HttpError}
+     * @memberof DefaultApi
+     */
+    getCenter(params?: {
+        centerInputDTO: CenterInputDTO;
+    }): Promise<CenterOutputDTO>;
     /**
      *
      * @summary getRoute
@@ -45,6 +58,21 @@ export interface DefaultApiInterface {
  * DefaultApi - object-oriented interface
  */
 export class DefaultApi extends BaseAPI implements DefaultApiInterface {
+    /**
+     *
+     * @summary getCenter
+     * @param {*} [params] Request parameters, including pathParams, queryParams (including bodyParams) and http options.
+     * @throws {HttpError}
+     */
+    public async getCenter(params: {
+        centerInputDTO: CenterInputDTO;
+    }): Promise<CenterOutputDTO> {
+        return await this.POST(
+            "/center",
+            {},
+            { body: params.centerInputDTO, contentType: "application/json" }
+        );
+    }
     /**
      *
      * @summary getRoute

@@ -23,6 +23,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RouteOutputDTO'
+  /center:
+    post:
+      summary: getCenter
+      operationId: getCenter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CenterInputDTO"
+      responses:
+        200:
+          description: "Successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CenterOutputDTO'
 components:
   schemas:
     RouteInputDTO:
@@ -98,6 +115,29 @@ components:
         shape:
           description: ""
           type: string
+    UserInfoDTO:
+      type: object
+      properties:
+        location:
+          description: ""
+          $ref: "#/components/schemas/LocationDTO"
+        mode:
+          description: ""
+          $ref: "#/components/schemas/TravelModeDTO"
+    CenterInputDTO:
+      type: object
+      properties:
+        users:
+          description: ""
+          type: array
+          items:
+            $ref: "#/components/schemas/UserInfoDTO"
+    CenterOutputDTO:
+      type: object
+      properties:
+        location:
+          description: ""
+          $ref: "#/components/schemas/LocationDTO"
     TravelModeDTO:
       description: >
         Travel modes:

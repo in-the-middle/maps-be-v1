@@ -1,9 +1,12 @@
 import {
+    CenterInputDTO,
+    CenterOutputDTO,
     LocationDTO,
     RouteInputDTO,
     RouteOutputDTO,
     SummaryDTO,
     TravelModeDTO,
+    UserInfoDTO,
 } from "../model";
 
 export class Random {
@@ -59,11 +62,14 @@ type Factory<T> = {
 type ModelFactory<T> = Factory<T> | ((testData: TestSampleData) => T);
 
 export interface SampleModelFactories {
+    CenterInputDTO?: ModelFactory<CenterInputDTO>;
+    CenterOutputDTO?: ModelFactory<CenterOutputDTO>;
     LocationDTO?: ModelFactory<LocationDTO>;
     RouteInputDTO?: ModelFactory<RouteInputDTO>;
     RouteOutputDTO?: ModelFactory<RouteOutputDTO>;
     SummaryDTO?: ModelFactory<SummaryDTO>;
     TravelModeDTO?: ModelFactory<TravelModeDTO>;
+    UserInfoDTO?: ModelFactory<UserInfoDTO>;
 }
 
 export interface SamplePropertyValues {
@@ -233,6 +239,14 @@ export class TestSampleData {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     sample(modelName: string): any {
         switch (modelName) {
+            case "CenterInputDTO":
+                return this.sampleCenterInputDTO();
+            case "Array<CenterInputDTO>":
+                return this.sampleArrayCenterInputDTO();
+            case "CenterOutputDTO":
+                return this.sampleCenterOutputDTO();
+            case "Array<CenterOutputDTO>":
+                return this.sampleArrayCenterOutputDTO();
             case "LocationDTO":
                 return this.sampleLocationDTO();
             case "Array<LocationDTO>":
@@ -253,9 +267,61 @@ export class TestSampleData {
                 return this.sampleTravelModeDTO();
             case "Array<TravelModeDTO>":
                 return this.sampleArrayTravelModeDTO();
+            case "UserInfoDTO":
+                return this.sampleUserInfoDTO();
+            case "Array<UserInfoDTO>":
+                return this.sampleArrayUserInfoDTO();
             default:
                 throw new Error("Unknown type " + modelName);
         }
+    }
+
+    sampleCenterInputDTO(template: Factory<CenterInputDTO> = {}): CenterInputDTO {
+        const containerClass = "CenterInputDTO";
+        if (typeof this.sampleModelProperties[containerClass] === "function") {
+            return this.sampleModelProperties[containerClass](this);
+        }
+        return {
+            users: this.generate(
+                template?.users,
+                { containerClass, propertyName: "users", example: null, isNullable: false },
+                () => this.sampleArrayUserInfoDTO()
+            ),
+        };
+    }
+
+    sampleArrayCenterInputDTO(
+        template: Factory<CenterInputDTO> = {},
+        length?: number
+    ): Array<CenterInputDTO> {
+        return this.randomArray(
+            () => this.sampleCenterInputDTO(template),
+            length ?? this.arrayLength()
+        );
+    }
+
+    sampleCenterOutputDTO(template: Factory<CenterOutputDTO> = {}): CenterOutputDTO {
+        const containerClass = "CenterOutputDTO";
+        if (typeof this.sampleModelProperties[containerClass] === "function") {
+            return this.sampleModelProperties[containerClass](this);
+        }
+        return {
+            location: this.generate(
+                template?.location,
+                { containerClass, propertyName: "location", example: "null", isNullable: false },
+                () => this.sampleLocationDTO()
+            ),
+        };
+    }
+
+    sampleArrayCenterOutputDTO(
+        template: Factory<CenterOutputDTO> = {},
+        length?: number
+    ): Array<CenterOutputDTO> {
+        return this.randomArray(
+            () => this.sampleCenterOutputDTO(template),
+            length ?? this.arrayLength()
+        );
     }
 
     sampleLocationDTO(template: Factory<LocationDTO> = {}): LocationDTO {
@@ -450,6 +516,35 @@ export class TestSampleData {
     sampleArrayTravelModeDTO(length?: number): Array<TravelModeDTO> {
         return this.randomArray(
             () => this.sampleTravelModeDTO(),
+            length ?? this.arrayLength()
+        );
+    }
+
+    sampleUserInfoDTO(template: Factory<UserInfoDTO> = {}): UserInfoDTO {
+        const containerClass = "UserInfoDTO";
+        if (typeof this.sampleModelProperties[containerClass] === "function") {
+            return this.sampleModelProperties[containerClass](this);
+        }
+        return {
+            location: this.generate(
+                template?.location,
+                { containerClass, propertyName: "location", example: "null", isNullable: false },
+                () => this.sampleLocationDTO()
+            ),
+            mode: this.generate(
+                template?.mode,
+                { containerClass, propertyName: "mode", example: "null", isNullable: false },
+                () => this.sampleTravelModeDTO()
+            ),
+        };
+    }
+
+    sampleArrayUserInfoDTO(
+        template: Factory<UserInfoDTO> = {},
+        length?: number
+    ): Array<UserInfoDTO> {
+        return this.randomArray(
+            () => this.sampleUserInfoDTO(template),
             length ?? this.arrayLength()
         );
     }

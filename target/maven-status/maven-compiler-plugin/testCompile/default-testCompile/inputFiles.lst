@@ -1,1 +1,2 @@
 /home/yermakov/IdeaProjects/maps-be-v1/src/test/java/ua/trip/maps/be/v1/MapsApplicationTest.java
+/home/yermakov/IdeaProjects/maps-be-v1/src/test/java/ua/trip/maps/be/v1/geometry/service/ConvexHullServiceTest.java
