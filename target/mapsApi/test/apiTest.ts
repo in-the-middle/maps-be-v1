@@ -12,11 +12,14 @@
  */
 
 import {
+    CenterInputDTO,
+    CenterOutputDTO,
     LocationDTO,
     RouteInputDTO,
     RouteOutputDTO,
     SummaryDTO,
     TravelModeDTO,
+    UserInfoDTO,
 } from "../model";
 
 import {
@@ -35,9 +38,11 @@ export function mockApplicationApis({
 }
 
 export function mockDefaultApi(operations: {
+    getCenter?: () => Promise<CenterOutputDTO>;
     getRoute?: () => Promise<RouteOutputDTO>;
 } = {}): DefaultApiInterface {
     return {
+        getCenter: operations.getCenter || reject("DefaultApi.getCenter"),
         getRoute: operations.getRoute || reject("DefaultApi.getRoute"),
     };
 }
