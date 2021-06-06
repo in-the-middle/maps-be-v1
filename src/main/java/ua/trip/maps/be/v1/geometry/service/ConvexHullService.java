@@ -12,7 +12,7 @@ import java.util.List;
 public class ConvexHullService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConvexHullService.class);
 
-    public List<Point> getConvexHull(List<Point> points) {
+    public List<Point> buildConvexHull(List<Point> points) {
         int pointsSize = points.size();
         points.sort((pointA, pointB) -> {
             if (pointA.getX().equals(pointB.getX())) {
