@@ -15,7 +15,7 @@ import javax.validation.constraints.*;
  * Object that represents input of route request
  */
 @ApiModel(description = "Object that represents input of route request")
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-05-30T18:25:24.371480+03:00[Europe/Zaporozhye]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-07-05T08:11:52.488171+03:00[Europe/Zaporozhye]")
 
 public class RouteInputDTO   {
   @JsonProperty("origin")

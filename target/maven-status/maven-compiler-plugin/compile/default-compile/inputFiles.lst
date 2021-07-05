@@ -29,5 +29,6 @@
 /home/yermakov/IdeaProjects/maps-be-v1/src/main/java/ua/trip/maps/be/v1/health/HealthCheckController.java
 /home/yermakov/IdeaProjects/maps-be-v1/src/main/java/ua/trip/maps/be/v1/configuration/SecurityConfiguration.java
 /home/yermakov/IdeaProjects/maps-be-v1/src/main/java/ua/trip/maps/be/v1/controller/RouteController.java
+/home/yermakov/IdeaProjects/maps-be-v1/src/main/java/ua/trip/maps/be/v1/service/MatrixService.java
 /home/yermakov/IdeaProjects/maps-be-v1/src/main/java/ua/trip/maps/be/v1/valhalla/model/MatrixInputValhallaModel.java
 /home/yermakov/IdeaProjects/maps-be-v1/src/main/java/ua/trip/maps/be/v1/geometry/model/Point.java
