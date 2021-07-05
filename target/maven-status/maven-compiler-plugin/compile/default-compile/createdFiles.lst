@@ -1,5 +1,6 @@
 ua/trip/maps/service/api/ApiUtil.class
 ua/trip/maps/be/v1/service/CenterService.class
+ua/trip/maps/be/v1/service/MatrixService.class
 ua/trip/maps/be/v1/valhalla/model/RouteOutputValhallaModel.class
 ua/trip/maps/service/model/CenterInputDTO.class
 ua/trip/maps/be/v1/controller/CenterController.class

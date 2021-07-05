@@ -36,7 +36,7 @@ public class MappingUtils {
         return routeOutputDTO;
     }
 
-    private static String map(TravelModeDTO travelModeDTO) {
+    public static String map(TravelModeDTO travelModeDTO) {
         if (travelModeDTO.equals(TravelModeDTO.DRIVING)) {
             return "auto";
         } else if (travelModeDTO.equals(TravelModeDTO.BICYCLING)) {
