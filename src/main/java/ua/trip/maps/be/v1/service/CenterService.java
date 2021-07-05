@@ -11,12 +11,8 @@ import ua.trip.maps.be.v1.geometry.model.Point;
 import ua.trip.maps.be.v1.geometry.service.ConvexHullService;
 import ua.trip.maps.be.v1.geometry.service.PolygonPointGenerator;
 import ua.trip.maps.be.v1.utils.MappingUtils;
-import ua.trip.maps.be.v1.valhalla.consumer.ValhallaApiConsumer;
 import ua.trip.maps.be.v1.valhalla.model.*;
-import ua.trip.maps.service.model.CenterInputDTO;
-import ua.trip.maps.service.model.CenterOutputDTO;
-import ua.trip.maps.service.model.LocationDTO;
-import ua.trip.maps.service.model.UserInfoDTO;
+import ua.trip.maps.service.model.*;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
@@ -38,13 +34,13 @@ public class CenterService {
     MatrixService matrixService;
 
     @Autowired
+    RouteService routeService;
+
+    @Autowired
     PolygonPointGenerator polygonPointGenerator;
 
     @Autowired
     ConvexHullService convexHullService;
-
-    @Autowired
-    ValhallaApiConsumer valhallaApiConsumer;
 
     //todo fix for two points
     public CenterOutputDTO getCenter(CenterInputDTO centerInputDTO) {
@@ -62,30 +58,11 @@ public class CenterService {
                 .map(MappingUtils::map)
                 .collect(Collectors.toList());
 
-        List<Point> currentState = centerInputDTO.getUsers().stream()
-                .map(UserInfoDTO::getLocation)
-                .map(locationDTO -> new Point(locationDTO.getLat(), locationDTO.getLon()))
-                .collect(Collectors.toList());
+        List<Point> currentState = getInitialState(centerInputDTO);
         List<Point> convexHull;
 
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
-            if(currentState.size() == 2){
-                double y1 = currentState.get(0).getY(), y2 = currentState.get(1).getY();
-                double x1 = currentState.get(0).getX(), x2 = currentState.get(1).getX();
-                double diff = abs(x2 - x1);
-                double midX = (x1 + x2) / 2.0;
-                double midY = (y1 + y2) / 2.0;
-                if(x1 == x2) {
-                    x1 += 0.0005;
-                }
-                double k = (y1 - y2) / (x1 - x2);
-                double kPer = -1.0 / k;
-                double bPer = midY + midX/ k;
-                double x1Per = midX + diff / 5, x2Per = midX - diff / 5;
-                double y1Per = bPer + kPer * x1Per, y2Per = bPer + kPer * x2Per;
-                currentState.add(new Point(x1Per, y1Per));
-                currentState.add(new Point(x2Per, y2Per));
-            }
+            preProcessCurrentState(currentState);
             convexHull = convexHullService.buildConvexHull(currentState);
             List<Point> equallyDistributedPoints = polygonPointGenerator.generatePoints(convexHull, NUMBER_OF_POINTS_TO_GENERATE);
             List<LocationValhallaModel> targets = equallyDistributedPoints.stream()
@@ -115,7 +92,7 @@ public class CenterService {
                     throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
                 }
                 for (int k = 0; k < targets.size(); k++) {
-                    Integer maxTime = Math.max(maximumTimeToPoint.get(k), times.get(k));
+                    Integer maxTime = Math.max(maximumTimeToPoint.get(k), times.get(k) == null ? 100000 : times.get(k));
                     maximumTimeToPoint.set(k, maxTime);
                 }
             }
@@ -124,7 +101,7 @@ public class CenterService {
                 pairMaximumTimeToPointPointIndex.add(Map.entry(maximumTimeToPoint.get(j), j));
             }
             List<Integer> sortedByMaximumTimePointIndexes = pairMaximumTimeToPointPointIndex.stream()
-                    .sorted((a, b) -> a.getKey() < b.getKey() ? -1 : 1)
+                    .sorted(Map.Entry.comparingByKey())
                     .limit(15)
                     .map(Map.Entry::getValue)
                     .collect(Collectors.toList());
@@ -140,6 +117,52 @@ public class CenterService {
         result.setLon(currentState.get(0).getY());
         centerOutputDTO.setLocation(result);
         return centerOutputDTO;
+    }
+
+    private void preProcessCurrentState(List<Point> currentState){
+        if(currentState.size() == 2){
+            double y1 = currentState.get(0).getY(), y2 = currentState.get(1).getY();
+            double x1 = currentState.get(0).getX(), x2 = currentState.get(1).getX();
+            double diff = abs(x2 - x1);
+            double midX = (x1 + x2) / 2.0;
+            double midY = (y1 + y2) / 2.0;
+            if(x1 == x2) {
+                x1 += 0.0005;
+            }
+            double k = (y1 - y2) / (x1 - x2);
+            double kPer = -1.0 / k;
+            double bPer = midY + midX/ k;
+            double x1Per = midX + diff / 5, x2Per = midX - diff / 5;
+            double y1Per = bPer + kPer * x1Per, y2Per = bPer + kPer * x2Per;
+            currentState.add(new Point(x1Per, y1Per));
+            currentState.add(new Point(x2Per, y2Per));
+        }
+    }
+
+    private List<Point> getInitialState(CenterInputDTO centerInputDTO) {
+        List<Point> initialState = new ArrayList<>();
+        List<Future<RouteOutputDTO>> futureRouteResultList = new ArrayList<>();
+        for(int i = 0; i  < centerInputDTO.getUsers().size() - 1; i++){
+            for(int j = i + 1; j < centerInputDTO.getUsers().size(); j++){
+                RouteInputDTO routeInputDTO = new RouteInputDTO();
+                routeInputDTO.setOrigin(centerInputDTO.getUsers().get(i).getLocation());
+                routeInputDTO.setDestination(centerInputDTO.getUsers().get(j).getLocation());
+                routeInputDTO.setMode(centerInputDTO.getUsers().get(i).getMode());
+                futureRouteResultList.add(routeService.getRouteAsync(routeInputDTO));
+            }
+        }
+        for (Future<RouteOutputDTO> routeOutputDTOFuture : futureRouteResultList) {
+            try {
+                RouteOutputDTO routeOutputDTO = routeOutputDTOFuture.get();
+                SummaryDTO summaryDTO = routeOutputDTO.getSummary();
+                initialState.add(new Point(summaryDTO.getMinLat(), summaryDTO.getMinLon()));
+                initialState.add(new Point(summaryDTO.getMaxLat(), summaryDTO.getMaxLon()));
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.error(e.getMessage(), e);
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
+        }
+        return initialState;
     }
 
     private List<Integer> getTimes(MatrixOutputValhallaModel matrixOutputValhallaModel) {
