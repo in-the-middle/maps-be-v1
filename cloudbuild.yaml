@@ -1,0 +1,10 @@
+steps:
+  - name: maven:3-jdk-11
+    entrypoint: mvn
+    args: ["--batch-mode", "-U", "-e", "-Dmaven.test.skip=true", "clean", "package"]
+  - name: maven:3-jdk-11
+    entrypoint: mvn
+    args: ["--batch-mode", "-e", "test"]
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-t", "us-central1-docker.pkg.dev/tactical-grid-319816/maps/maps-be-v1", "."]
+images: ["us-central1-docker.pkg.dev/tactical-grid-319816/maps/maps-be-v1"]
