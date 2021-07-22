@@ -18,4 +18,16 @@ public class RouteInputValhallaModel {
 
     @JsonProperty("units")
     private String units;
+
+    @JsonProperty("costing_options")
+    CostingOptionsValhallaModel costingOptionsValhallaModel;
+
+//    @JsonProperty("use_tolls")
+//    private Integer useTolls;
+//
+//    @JsonProperty("use_highways")
+//    private Integer useHighways;
+//
+//    @JsonProperty("use_ferry")
+//    private Integer useFerry;
 }

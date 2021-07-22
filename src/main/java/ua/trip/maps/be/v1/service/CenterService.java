@@ -20,6 +20,7 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
+import static java.lang.Math.cos;
 
 
 @Service
@@ -58,6 +59,23 @@ public class CenterService {
                 .map(MappingUtils::map)
                 .collect(Collectors.toList());
 
+        List<CostingOptionsValhallaModel> costingOptionsValhallaModels = users.stream()
+                .map(userInfoDTO -> {
+                    CostingOptionsValhallaModel costingOptionsValhallaModel = new CostingOptionsValhallaModel();
+                    AutoCostingOptionValhallaModel autoCostingOptionValhallaModel = new AutoCostingOptionValhallaModel();
+                    if(Boolean.FALSE.equals(userInfoDTO.getIncludeFerries())){
+                        autoCostingOptionValhallaModel.setUseFerry(0);
+                    }
+                    if(Boolean.FALSE.equals(userInfoDTO.getIncludeHighways())){
+                        autoCostingOptionValhallaModel.setUseHighways(0);
+                    }
+                    if(Boolean.FALSE.equals(userInfoDTO.getIncludeTolls())){
+                        autoCostingOptionValhallaModel.setUseTolls(0);
+                    }
+                    costingOptionsValhallaModel.setAutoCostingOptionValhallaModel(autoCostingOptionValhallaModel);
+                    return costingOptionsValhallaModel;
+                }).collect(Collectors.toList());
+
         List<Point> currentState = getInitialState(centerInputDTO);
         List<Point> convexHull;
 
@@ -75,7 +93,7 @@ public class CenterService {
             List<Integer> maximumTimeToPoint = new ArrayList<>(Collections.nCopies(targets.size(), 0));
             List<Future<MatrixOutputValhallaModel>> futures = new ArrayList<>();
             for (int j = 0; j < sources.size(); j++) {
-                MatrixInputValhallaModel matrixInputValhallaModel = buildMatrixInput(sources.get(j), targets, costings.get(j));
+                MatrixInputValhallaModel matrixInputValhallaModel = buildMatrixInput(sources.get(j), targets, costings.get(j), costingOptionsValhallaModels.get(j));
                 futures.add(matrixService.getMatrixAsync(matrixInputValhallaModel));
 //                List<Integer> times = getTimes(sources.get(j), targets, costings.get(j));
 //                for(int k = 0; k < targets.size(); k++){
@@ -119,19 +137,19 @@ public class CenterService {
         return centerOutputDTO;
     }
 
-    private void preProcessCurrentState(List<Point> currentState){
-        if(currentState.size() == 2){
+    private void preProcessCurrentState(List<Point> currentState) {
+        if (currentState.size() == 2) {
             double y1 = currentState.get(0).getY(), y2 = currentState.get(1).getY();
             double x1 = currentState.get(0).getX(), x2 = currentState.get(1).getX();
             double diff = abs(x2 - x1);
             double midX = (x1 + x2) / 2.0;
             double midY = (y1 + y2) / 2.0;
-            if(x1 == x2) {
+            if (x1 == x2) {
                 x1 += 0.0005;
             }
             double k = (y1 - y2) / (x1 - x2);
             double kPer = -1.0 / k;
-            double bPer = midY + midX/ k;
+            double bPer = midY + midX / k;
             double x1Per = midX + diff / 5, x2Per = midX - diff / 5;
             double y1Per = bPer + kPer * x1Per, y2Per = bPer + kPer * x2Per;
             currentState.add(new Point(x1Per, y1Per));
@@ -142,8 +160,8 @@ public class CenterService {
     private List<Point> getInitialState(CenterInputDTO centerInputDTO) {
         List<Point> initialState = new ArrayList<>();
         List<Future<RouteOutputDTO>> futureRouteResultList = new ArrayList<>();
-        for(int i = 0; i  < centerInputDTO.getUsers().size() - 1; i++){
-            for(int j = i + 1; j < centerInputDTO.getUsers().size(); j++){
+        for (int i = 0; i < centerInputDTO.getUsers().size() - 1; i++) {
+            for (int j = i + 1; j < centerInputDTO.getUsers().size(); j++) {
                 RouteInputDTO routeInputDTO = new RouteInputDTO();
                 routeInputDTO.setOrigin(centerInputDTO.getUsers().get(i).getLocation());
                 routeInputDTO.setDestination(centerInputDTO.getUsers().get(j).getLocation());
@@ -171,12 +189,13 @@ public class CenterService {
                 .map(SourceToTargetValhallaModel::getTime).collect(Collectors.toList());
     }
 
-    private MatrixInputValhallaModel buildMatrixInput(LocationValhallaModel source, List<LocationValhallaModel> targets, String costing) {
+    private MatrixInputValhallaModel buildMatrixInput(LocationValhallaModel source, List<LocationValhallaModel> targets, String costing, CostingOptionsValhallaModel costingOptionsValhallaModel) {
         MatrixInputValhallaModel matrixInputValhallaModel = new MatrixInputValhallaModel();
 
         matrixInputValhallaModel.setSources(Collections.singletonList(source));
         matrixInputValhallaModel.setTargets(targets);
         matrixInputValhallaModel.setCosting(costing);
+        matrixInputValhallaModel.setCostingOptionsValhallaModel(costingOptionsValhallaModel);
 
         return matrixInputValhallaModel;
     }

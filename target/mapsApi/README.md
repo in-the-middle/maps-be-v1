@@ -39,7 +39,7 @@ navigate to the folder of your consuming project and run one of the following co
 _published:_
 
 ```
-npm install @ua.trip.maps/mapsApi@1.0.2021-07-05T05:11:49Z --save
+npm install @ua.trip.maps/mapsApi@1.0.2021-07-22T17:12:03Z --save
 ```
 
 _unPublished (not recommended):_

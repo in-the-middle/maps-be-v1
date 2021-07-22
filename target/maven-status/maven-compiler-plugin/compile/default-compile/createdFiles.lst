@@ -1,5 +1,6 @@
 ua/trip/maps/service/api/ApiUtil.class
 ua/trip/maps/be/v1/service/CenterService.class
+ua/trip/maps/be/v1/valhalla/model/CostingOptionsValhallaModel.class
 ua/trip/maps/be/v1/service/MatrixService.class
 ua/trip/maps/be/v1/valhalla/model/RouteOutputValhallaModel.class
 ua/trip/maps/service/model/CenterInputDTO.class
@@ -16,6 +17,7 @@ ua/trip/maps/be/v1/valhalla/consumer/ValhallaApiConsumer.class
 ua/trip/maps/service/model/CenterOutputDTO.class
 ua/trip/maps/be/v1/valhalla/model/SummaryValhallaModel.class
 ua/trip/maps/be/v1/service/RouteService.class
+ua/trip/maps/be/v1/valhalla/model/AutoCostingOptionValhallaModel.class
 ua/trip/maps/service/api/CenterApi.class
 ua/trip/maps/be/v1/MapsApplication.class
 ua/trip/maps/be/v1/valhalla/model/TripValhallaModel.class

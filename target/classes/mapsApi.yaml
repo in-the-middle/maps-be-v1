@@ -124,6 +124,15 @@ components:
         mode:
           description: ""
           $ref: "#/components/schemas/TravelModeDTO"
+        includeTolls:
+          description: ""
+          type: boolean
+        includeHighways:
+          description: ""
+          type: boolean
+        includeFerries:
+          description: ""
+          type: boolean
     CenterInputDTO:
       type: object
       properties:
