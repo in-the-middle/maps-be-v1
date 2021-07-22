@@ -14,7 +14,7 @@ import javax.validation.constraints.*;
 /**
  * RouteOutputDTO
  */
-@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-07-05T08:11:52.488171+03:00[Europe/Zaporozhye]")
+@javax.annotation.Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2021-07-22T20:12:05.839217+03:00[Europe/Zaporozhye]")
 
 public class RouteOutputDTO   {
   @JsonProperty("units")

@@ -3,3 +3,4 @@ spring:
     name: maps-be-v1
 server:
   port: 8080
+VALHALLA_SERVICE_URL: https://valhalla-45iud4jnfq-uc.a.run.app

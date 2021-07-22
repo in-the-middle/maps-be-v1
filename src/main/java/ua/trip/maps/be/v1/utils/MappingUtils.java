@@ -11,9 +11,25 @@ public class MappingUtils {
         RouteInputValhallaModel routeInputValhallaModel = new RouteInputValhallaModel();
         routeInputValhallaModel.setCosting(map(routeInputDTO.getMode()));
         //todo add unit in contract
-        routeInputValhallaModel.setUnits("kilometers");
+        routeInputValhallaModel.setUnits("miles");
         //todo add destination type in contract
         routeInputValhallaModel.setDirectionsType("none");
+
+        CostingOptionsValhallaModel costingOptionsValhallaModel = new CostingOptionsValhallaModel();
+        AutoCostingOptionValhallaModel autoCostingOptionValhallaModel = new AutoCostingOptionValhallaModel();
+        if(Boolean.FALSE.equals(routeInputDTO.getIncludeFerries())){
+            autoCostingOptionValhallaModel.setUseFerry(0);
+        }
+
+        if(Boolean.FALSE.equals(routeInputDTO.getIncludeHighways())){
+            autoCostingOptionValhallaModel.setUseHighways(0);
+        }
+
+        if(Boolean.FALSE.equals(routeInputDTO.getIncludeTolls())){
+            autoCostingOptionValhallaModel.setUseTolls(0);
+        }
+        costingOptionsValhallaModel.setAutoCostingOptionValhallaModel(autoCostingOptionValhallaModel);
+        routeInputValhallaModel.setCostingOptionsValhallaModel(costingOptionsValhallaModel);
 
         List<LocationValhallaModel> locations = new ArrayList<>();
         locations.add(map(routeInputDTO.getOrigin()));

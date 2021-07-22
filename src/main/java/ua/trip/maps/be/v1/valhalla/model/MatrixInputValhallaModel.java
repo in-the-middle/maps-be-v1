@@ -18,4 +18,7 @@ public class MatrixInputValhallaModel {
 
     @JsonProperty("units")
     private String units;
+
+    @JsonProperty("costing_options")
+    private CostingOptionsValhallaModel costingOptionsValhallaModel;
 }
