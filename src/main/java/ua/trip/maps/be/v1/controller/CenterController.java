@@ -19,6 +19,7 @@ public class CenterController implements CenterApi {
 
     @Override
     public ResponseEntity<CenterOutputDTO> getCenter(CenterInputDTO centerInputDTO) {
+        LOGGER.info("GET Center: numberOfUsers=[{}]", centerInputDTO.getUsers().size());
         return ResponseEntity.ok(centerService.getCenter(centerInputDTO));
     }
 }

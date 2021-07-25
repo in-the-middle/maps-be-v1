@@ -3,8 +3,8 @@ package ua.trip.maps.be.v1.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import ua.trip.maps.be.v1.geometry.model.Point;
@@ -14,22 +14,28 @@ import ua.trip.maps.be.v1.utils.MappingUtils;
 import ua.trip.maps.be.v1.valhalla.model.*;
 import ua.trip.maps.service.model.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-
 
 @Service
 public class CenterService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CenterService.class);
 
-    private static final Integer NUMBER_OF_POINTS_TO_GENERATE = 50;
+    @Value("${NUMBER_OF_POINTS_TO_GENERATE}")
+    private Integer numberOfPointsToGenerate;
 
-    private static final Integer NUMBER_OF_ITERATIONS = 5;
+    @Value("${NUMBER_OF_ITERATIONS}")
+    private Integer numberOfIterations;
+
+    @Value("${NUMBER_OF_BEST_POINTS_FILTER}")
+    private Integer numberOfBestPointsFilter;
 
     @Autowired
     MatrixService matrixService;
@@ -45,6 +51,7 @@ public class CenterService {
 
     //todo fix for two points
     public CenterOutputDTO getCenter(CenterInputDTO centerInputDTO) {
+        LOGGER.info("Start calculation of center point");
         List<UserInfoDTO> users = centerInputDTO.getUsers();
         List<LocationValhallaModel> sources = users.stream()
                 .map(UserInfoDTO::getLocation)
@@ -63,13 +70,13 @@ public class CenterService {
                 .map(userInfoDTO -> {
                     CostingOptionsValhallaModel costingOptionsValhallaModel = new CostingOptionsValhallaModel();
                     AutoCostingOptionValhallaModel autoCostingOptionValhallaModel = new AutoCostingOptionValhallaModel();
-                    if(Boolean.FALSE.equals(userInfoDTO.getIncludeFerries())){
+                    if (Boolean.FALSE.equals(userInfoDTO.getIncludeFerries())) {
                         autoCostingOptionValhallaModel.setUseFerry(0);
                     }
-                    if(Boolean.FALSE.equals(userInfoDTO.getIncludeHighways())){
+                    if (Boolean.FALSE.equals(userInfoDTO.getIncludeHighways())) {
                         autoCostingOptionValhallaModel.setUseHighways(0);
                     }
-                    if(Boolean.FALSE.equals(userInfoDTO.getIncludeTolls())){
+                    if (Boolean.FALSE.equals(userInfoDTO.getIncludeTolls())) {
                         autoCostingOptionValhallaModel.setUseTolls(0);
                     }
                     costingOptionsValhallaModel.setAutoCostingOptionValhallaModel(autoCostingOptionValhallaModel);
@@ -79,10 +86,11 @@ public class CenterService {
         List<Point> currentState = getInitialState(centerInputDTO);
         List<Point> convexHull;
 
-        for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
+        for (int i = 0; i < numberOfIterations; i++) {
+            LOGGER.info("Calculating center: currentIteration=[{}], currentStateSize=[{}]", i + 1, currentState.size());
             preProcessCurrentState(currentState);
             convexHull = convexHullService.buildConvexHull(currentState);
-            List<Point> equallyDistributedPoints = polygonPointGenerator.generatePoints(convexHull, NUMBER_OF_POINTS_TO_GENERATE);
+            List<Point> equallyDistributedPoints = polygonPointGenerator.generatePoints(convexHull, numberOfPointsToGenerate);
             List<LocationValhallaModel> targets = equallyDistributedPoints.stream()
                     .map(point -> {
                         LocationValhallaModel target = new LocationValhallaModel();
@@ -120,7 +128,7 @@ public class CenterService {
             }
             List<Integer> sortedByMaximumTimePointIndexes = pairMaximumTimeToPointPointIndex.stream()
                     .sorted(Map.Entry.comparingByKey())
-                    .limit(15)
+                    .limit(numberOfBestPointsFilter)
                     .map(Map.Entry::getValue)
                     .collect(Collectors.toList());
             currentState.clear();
@@ -128,7 +136,7 @@ public class CenterService {
                 currentState.add(equallyDistributedPoints.get(sortedByMaximumTimePointIndex));
             }
         }
-
+        LOGGER.info("End calculation of center point");
         CenterOutputDTO centerOutputDTO = new CenterOutputDTO();
         LocationDTO result = new LocationDTO();
         result.setLat(currentState.get(0).getX());
