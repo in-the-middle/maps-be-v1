@@ -5,9 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import ua.trip.maps.be.v1.MapsApplication;
 import ua.trip.maps.be.v1.geometry.model.Point;
+import ua.trip.maps.be.v1.service.CenterService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +17,8 @@ import java.util.List;
 @SpringBootTest(classes = MapsApplication.class)
 @RunWith(SpringRunner.class)
 public class ConvexHullServiceTest {
+    @MockBean
+    CenterService centerService;
 
     @Autowired
     ConvexHullService convexHullService;
