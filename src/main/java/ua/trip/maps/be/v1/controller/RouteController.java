@@ -20,6 +20,16 @@ public class RouteController implements RouteApi {
 
     @Override
     public ResponseEntity<RouteOutputDTO> getRoute(RouteInputDTO routeInputDTO) {
+        LOGGER.info("GET Route: originLatLon=[{},{}],destinationLatLon=[{},{}]," +
+                        "travelMode=[{}],includeTolls=[{}],includeHighways=[{}],includeFerries=[{}]",
+                routeInputDTO.getOrigin().getLat(),
+                routeInputDTO.getOrigin().getLon(),
+                routeInputDTO.getDestination().getLat(),
+                routeInputDTO.getDestination().getLon(),
+                routeInputDTO.getMode(),
+                routeInputDTO.getIncludeTolls(),
+                routeInputDTO.getIncludeHighways(),
+                routeInputDTO.getIncludeFerries());
         return ResponseEntity.ok(routeService.getRoute(routeInputDTO));
     }
 }

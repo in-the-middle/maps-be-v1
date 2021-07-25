@@ -3,4 +3,7 @@ spring:
     name: maps-be-v1
 server:
   port: 8080
-VALHALLA_SERVICE_URL: https://valhalla-45iud4jnfq-uc.a.run.app
+NUMBER_OF_POINTS_TO_GENERATE: 30
+NUMBER_OF_ITERATIONS: 3
+NUMBER_OF_BEST_POINTS_FILTER: 15
+VALHALLA_SERVICE_URL: 35.202.112.198:8002
