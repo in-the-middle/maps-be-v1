@@ -78,6 +78,7 @@ public class CenterService {
                     }
                     if (Boolean.FALSE.equals(userInfoDTO.getIncludeTolls())) {
                         autoCostingOptionValhallaModel.setUseTolls(0);
+                        autoCostingOptionValhallaModel.setTollBoothPenalty(10000);
                     }
                     costingOptionsValhallaModel.setAutoCostingOptionValhallaModel(autoCostingOptionValhallaModel);
                     return costingOptionsValhallaModel;
@@ -174,6 +175,9 @@ public class CenterService {
                 routeInputDTO.setOrigin(centerInputDTO.getUsers().get(i).getLocation());
                 routeInputDTO.setDestination(centerInputDTO.getUsers().get(j).getLocation());
                 routeInputDTO.setMode(centerInputDTO.getUsers().get(i).getMode());
+                routeInputDTO.setIncludeFerries(centerInputDTO.getUsers().get(i).getIncludeFerries());
+                routeInputDTO.setIncludeHighways(centerInputDTO.getUsers().get(i).getIncludeHighways());
+                routeInputDTO.setIncludeTolls(centerInputDTO.getUsers().get(i).getIncludeTolls());
                 futureRouteResultList.add(routeService.getRouteAsync(routeInputDTO));
             }
         }

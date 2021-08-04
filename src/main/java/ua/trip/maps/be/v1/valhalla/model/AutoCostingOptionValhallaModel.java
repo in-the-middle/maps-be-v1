@@ -8,6 +8,9 @@ public class AutoCostingOptionValhallaModel {
     @JsonProperty("use_tolls")
     private Integer useTolls;
 
+    @JsonProperty("toll_booth_penalty")
+    private Integer tollBoothPenalty;
+
     @JsonProperty("use_highways")
     private Integer useHighways;
 
