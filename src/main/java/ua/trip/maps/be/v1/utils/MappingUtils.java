@@ -27,6 +27,7 @@ public class MappingUtils {
 
         if(Boolean.FALSE.equals(routeInputDTO.getIncludeTolls())){
             autoCostingOptionValhallaModel.setUseTolls(0);
+            autoCostingOptionValhallaModel.setTollBoothPenalty(10000);
         }
         costingOptionsValhallaModel.setAutoCostingOptionValhallaModel(autoCostingOptionValhallaModel);
         routeInputValhallaModel.setCostingOptionsValhallaModel(costingOptionsValhallaModel);
