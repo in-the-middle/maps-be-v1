@@ -16,4 +16,7 @@ public class AutoCostingOptionValhallaModel {
 
     @JsonProperty("use_ferry")
     private Integer useFerry;
+
+    @JsonProperty("ferry_cost")
+    private Integer ferryCost = 10000;
 }
