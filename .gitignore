@@ -34,3 +34,5 @@ transaction-logs
 .flattened-pom.xml
 secrets.yml
 .gradletasknamecache
+/target/
+/target/
