@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+//import ua.trip.auth.lib.v1.jwt.SigningKeyResolver;
 import ua.trip.maps.be.v1.MapsApplication;
 import ua.trip.maps.be.v1.geometry.model.Point;
 import ua.trip.maps.be.v1.service.CenterService;

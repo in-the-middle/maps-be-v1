@@ -105,11 +105,11 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ua.trip</groupId>
-            <artifactId>auth-lib-v1</artifactId>
-            <version>0.0.1</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>ua.trip</groupId>-->
+<!--            <artifactId>auth-lib-v1</artifactId>-->
+<!--            <version>0.0.1</version>-->
+<!--        </dependency>-->
     </dependencies>
     <build>
         <plugins>
